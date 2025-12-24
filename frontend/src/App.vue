@@ -1,30 +1,60 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from "vue";
+import FeaturesList from "./components/FeaturesList.vue";
+import DynamicUIDemo from "./components/dynamic/UIDemo.vue";
+const currentView = ref<"features" | "dynamic">("dynamic");
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+	<div id="app">
+		<nav class="nav-tabs">
+			<button
+				@click="currentView = 'features'"
+				:class="{ active: currentView === 'features' }">
+				Feature Flags
+			</button>
+			<button
+				@click="currentView = 'dynamic'"
+				:class="{ active: currentView === 'dynamic' }">
+				Dynamic UI Demo
+			</button>
+		</nav>
+		<FeaturesList v-if="currentView === 'features'" />
+		<DynamicUIDemo v-else />
+	</div>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+#app {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	min-height: 100vh;
+	background: #ffffff;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.nav-tabs {
+	display: flex;
+	gap: 0;
+	background: #f3f4f6;
+	padding: 1rem;
+	border-bottom: 2px solid #e5e7eb;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.nav-tabs button {
+	padding: 0.75rem 1.5rem;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-weight: 500;
+	color: #6b7280;
+	transition: all 0.3s ease;
+	border-bottom: 3px solid transparent;
+}
+.nav-tabs button.active {
+	color: #3b82f6;
+	border-bottom-color: #3b82f6;
+}
+.nav-tabs button:hover {
+	background: #e5e7eb;
 }
 </style>
