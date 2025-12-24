@@ -12,29 +12,25 @@ import TextInput from "./TextInput.vue";
 import DatePicker from "./DatePicker.vue";
 
 export const ComponentRegistry: Record<string, Component> = {
-    // Básicos
+    // Basic Components
     button: Button,
     container: Container,
     heading: Heading,
     text: Text,
 
-    // Estructurales
+    // Structural Components
     card: Card,
     collapsible: Collapsible,
     containerCollapsible: Collapsible,
 
-    // Formularios
-    toogle: Toggle,
+    // Form Components
     toggle: Toggle,
     dropdown: Dropdown,
     dropdownDatePicker: Dropdown,
-    checkBox: Checkbox,
     checkbox: Checkbox,
     radioGroup: Dropdown,
     input: TextInput,
-    textInput: TextInput,
     date: DatePicker,
-    datePicker: DatePicker,
 };
 export const getComponent = (type: string): Component | null => {
     return ComponentRegistry[type] || null;

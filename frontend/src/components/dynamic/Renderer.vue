@@ -4,21 +4,37 @@ import type { UIComponent } from "../../types/ui-component";
 import { getComponent } from "./ComponentRegistry";
 
 import Renderer from "./Renderer.vue";
+
 interface Props {
 	config: UIComponent;
 }
+
 const props = defineProps<Props>();
+
+/**
+ * Component to render
+ */
 const component = computed(() => {
 	return getComponent(props.config.type);
 });
+
+/**
+ * Children components
+ */
 const children = computed(() => {
 	return props.config.components || props.config.children || [];
 });
 
+/**
+ * Has children
+ */
 const hasChildren = computed(() => {
 	return children.value.length > 0;
 });
 
+/**
+ * Component props
+ */
 const componentProps = computed(() => {
 	const {
 		style,
@@ -30,15 +46,14 @@ const componentProps = computed(() => {
 	} = props.config;
 
 	return {
-		...configProps, // Soporte para el formato anterior
-		...rest, // Propiedades directas (title, keyname, etc.)
-		uiStyle: style, // Renombramos 'style' a 'uiStyle' para evitar conflictos con HTML nativo
+		...configProps,
+		...rest,
+		uiStyle: style,
 	};
 });
 </script>
 <template>
 	<component v-if="component" :is="component" v-bind="componentProps">
-		<!-- Recursión: renderiza hijos si existen -->
 		<template v-if="hasChildren">
 			<Renderer
 				v-for="(child, index) in children"
@@ -46,13 +61,11 @@ const componentProps = computed(() => {
 				:config="child" />
 		</template>
 
-		<!-- Si tiene texto directo (sin hijos) -->
 		<template v-else-if="config.text">
 			{{ config.text }}
 		</template>
 	</component>
 
-	<!-- Fallback si el componente no existe -->
 	<div v-else class="unknown-component">
 		Unknown component type: {{ config.type }}
 	</div>
