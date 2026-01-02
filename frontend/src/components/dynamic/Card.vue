@@ -19,31 +19,50 @@ const props = defineProps({
 </template>
 <style scoped>
 .dynamic-card {
-	background: white;
-	border-radius: 8px;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	margin-bottom: 1rem;
-	border: 1px solid #e5e7eb;
+	background-color: var(--bg-card);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-sm);
+	margin-bottom: 1.5rem;
+	border: 1px solid var(--border-color);
 	overflow: hidden;
 	text-align: left;
+	transition: all var(--transition-normal);
 	container-type: inline-size;
 }
+
+.dynamic-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-md);
+	border-color: var(--primary-300);
+}
+
 .card-header {
 	padding: 1.5rem 1.5rem 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
+
 .card-title {
 	margin: 0;
-	font-size: 1.1rem;
-	font-weight: 600;
-	color: #111827; /* Gris oscuro casi negro */
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: var(--text-main);
+	letter-spacing: -0.01em;
 }
+
 .card-description {
-	padding: 0 1.5rem 1rem;
-	color: #6b7280;
-	font-size: 0.875rem;
-	line-height: 1.4;
+	padding: 0 1.5rem 1.25rem;
+	color: var(--text-secondary);
+	font-size: 0.9375rem;
+	line-height: 1.6;
 }
+
 .card-body {
 	padding: 0 1.5rem 1.5rem;
+}
+
+[data-theme="dark"] .dynamic-card:hover {
+	border-color: var(--primary-700);
 }
 </style>

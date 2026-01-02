@@ -1,40 +1,39 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
 
-const props = defineProps({
-	title: { type: String, default: "" },
-	value: { type: Boolean, default: false },
-	disabled: { type: Boolean, default: false },
-});
+const props = defineProps<{
+	title?: string;
+	value?: boolean;
+	modelValue?: boolean;
+	disabled?: boolean;
+	readOnly?: boolean;
+}>();
 
-const isChecked = ref(props.value);
+const emit = defineEmits(["update:modelValue", "change"]);
 
-/**
- * Toggle the checkbox
- */
-const toggle = () => {
-	if (!props.disabled) isChecked.value = !isChecked.value;
+const checkboxId = computed(
+	() => `checkbox-${Math.random().toString(36).substr(2, 9)}`,
+);
+
+const handleChange = (event: Event) => {
+	const target = event.target as HTMLInputElement;
+	emit("update:modelValue", target.checked);
+	emit("change", target.checked);
 };
 </script>
 
 <template>
-	<div
-		class="dynamic-checkbox"
-		:class="{ disabled: disabled }"
-		@click="toggle">
-		<div class="checkbox-box" :class="{ checked: isChecked }">
-			<svg
-				v-if="isChecked"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="3"
-				stroke-linecap="round"
-				stroke-linejoin="round">
-				<polyline points="20 6 9 17 4 12"></polyline>
-			</svg>
-		</div>
-		<span v-if="title" class="checkbox-label">{{ title }}</span>
+	<div class="dynamic-checkbox">
+		<input
+			type="checkbox"
+			:id="checkboxId"
+			:checked="props.modelValue ?? props.value"
+			@change="handleChange"
+			:disabled="props.readOnly || props.disabled"
+			class="checkbox-input" />
+		<label :for="checkboxId" class="checkbox-label">
+			{{ props.title }}
+		</label>
 	</div>
 </template>
 
@@ -44,41 +43,67 @@ const toggle = () => {
 	align-items: center;
 	gap: 0.75rem;
 	margin: 0.5rem 0;
+}
+
+.checkbox-input {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	border: 2px solid var(--border-color);
+	border-radius: var(--radius-sm);
+	background-color: var(--bg-input);
+	appearance: none;
+	display: grid;
+	place-content: center;
+	transition: all var(--transition-fast);
+	box-shadow: var(--shadow-sm);
+}
+
+.checkbox-input::before {
+	content: "";
+	width: 12px;
+	height: 12px;
+	transform: scale(0);
+	transition: 120ms transform ease-in-out;
+	box-shadow: inset 1em 1em var(--bg-card);
+	background-color: CanvasText;
+	clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.checkbox-input:checked {
+	background-color: var(--primary-500);
+	border-color: var(--primary-600);
+}
+
+.checkbox-input:checked::before {
+	transform: scale(1);
+}
+
+.checkbox-input:focus {
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.checkbox-input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	background-color: var(--bg-app);
+}
+
+.checkbox-label {
+	font-size: 0.9375rem;
+	font-weight: 600;
+	color: var(--text-secondary);
 	cursor: pointer;
 	user-select: none;
 }
 
-.dynamic-checkbox.disabled {
+.checkbox-input:disabled + .checkbox-label {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
 
-.checkbox-box {
-	width: 20px;
-	height: 20px;
-	border: 2px solid #d1d5db;
-	border-radius: 4px;
-	background: white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.2s;
-}
-
-.checkbox-box.checked {
-	background: #3b82f6;
-	border-color: #3b82f6;
-	color: white;
-}
-
-.checkbox-box svg {
-	width: 14px;
-	height: 14px;
-}
-
-.checkbox-label {
-	font-size: 0.9rem;
-	color: #374151;
-	line-height: 1.2;
+[data-theme="dark"] .checkbox-input:checked {
+	background-color: var(--primary-600);
 }
 </style>

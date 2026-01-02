@@ -10,14 +10,13 @@ interface Props {
 const props = defineProps<Props>();
 
 /**
- * Container styles
+ * Container styles to be applied to the container
  * @returns {CSSProperties}
  */
 const containerStyles = computed((): CSSProperties => {
 	const layout = props.uiStyle?.layout;
 	if (!layout) return {};
 
-	// Pasamos variables CSS dinámicas para usarlas en el @container query
 	const vars: Record<string, string | number> = {
 		"--gap": layout.gap || "1rem",
 		"--justify": layout.justifyContent || "flex-start",
@@ -59,14 +58,23 @@ const layoutClass = computed(() => {
 /* === GRID LAYOUT === */
 .layout-grid {
 	display: grid;
-	grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr));
-	gap: var(--gap);
+	grid-template-columns: repeat(var(--cols, 1), 1fr);
+	gap: var(--gap, 1.5rem);
 }
 
-/* Responsive:only collapse when viewport < 450px */
-@container (max-width: 450px) {
+/* Responsive: collapse to 1 column on small containers */
+@container (max-width: 700px) {
+	.layout-grid[style*="--cols: 3"],
+	.layout-grid[style*="--cols: 4"] {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+}
+
+/* Responsive: collapse to 1 column on small containers */
+@container (max-width: 480px) {
 	.layout-grid {
 		grid-template-columns: 1fr !important;
+		gap: 1rem !important;
 	}
 }
 
@@ -75,7 +83,7 @@ const layoutClass = computed(() => {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	gap: var(--gap);
+	gap: var(--gap, 1.25rem);
 	justify-content: var(--justify);
 	align-items: center;
 }
@@ -84,6 +92,6 @@ const layoutClass = computed(() => {
 .layout-column {
 	display: flex;
 	flex-direction: column;
-	gap: var(--gap);
+	gap: var(--gap, 1.25rem);
 }
 </style>

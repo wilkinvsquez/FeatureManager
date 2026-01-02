@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import type { UIComponent } from "../../types/ui-component";
 import { getComponent } from "./ComponentRegistry";
+import { useFlagStore } from "../../stores/flags.store";
 
 import Renderer from "./Renderer.vue";
 
@@ -33,32 +34,31 @@ const hasChildren = computed(() => {
 });
 
 /**
- * Component props
+ * Component props to pass to each component on the tree
  */
 const componentProps = computed(() => {
-	const {
-		style,
-		props: configProps,
-		children,
-		components,
-		type,
-		...rest
-	} = props.config;
+	const { style, props: configProps, children, components, type, keyname, ...rest } = props.config;
+	let finalProps = { ...configProps, ...rest, keyname, uiStyle: style };
 
-	return {
-		...configProps,
-		...rest,
-		uiStyle: style,
-	};
+	if (keyname) {
+		const store = useFlagStore();
+		const flag = store.flags.find(f => f.keyname === keyname);
+
+		if (flag) {
+			console.log(`[Renderer] Injected flag for ${keyname}:`, flag.value);
+			if (typeof flag.value === "object" && flag.value !== null)
+				finalProps = { ...finalProps, ...flag.value };
+			else finalProps.value = flag.value;
+		}
+	}
+
+	return finalProps;
 });
 </script>
 <template>
 	<component v-if="component" :is="component" v-bind="componentProps">
 		<template v-if="hasChildren">
-			<Renderer
-				v-for="(child, index) in children"
-				:key="index"
-				:config="child" />
+			<Renderer v-for="(child, index) in children" :key="index" :config="child" />
 		</template>
 
 		<template v-else-if="config.text">
@@ -66,9 +66,7 @@ const componentProps = computed(() => {
 		</template>
 	</component>
 
-	<div v-else class="unknown-component">
-		Unknown component type: {{ config.type }}
-	</div>
+	<div v-else class="unknown-component"> Unknown component type: {{ config.type }} </div>
 </template>
 <style scoped>
 .unknown-component {

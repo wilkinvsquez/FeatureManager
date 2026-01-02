@@ -21,12 +21,13 @@ export const ComponentRegistry: Record<string, Component> = {
     // Structural Components
     card: Card,
     collapsible: Collapsible,
-    containerCollapsible: Collapsible,
+    customCloseSessionByMembership: Container,
+    toggleButton: Button,
+    toogleReference: Text,
 
     // Form Components
     toggle: Toggle,
     dropdown: Dropdown,
-    dropdownDatePicker: Dropdown,
     checkbox: Checkbox,
     radioGroup: Dropdown,
     input: TextInput,
