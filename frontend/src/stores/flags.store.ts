@@ -27,7 +27,7 @@ export const useFlagStore = defineStore('flags', () => {
     const fetchFlagsByServiceId = async (serviceId: string) => {
         loading.value = true;
         try {
-            flags.value = await FlagService.getAll();
+            flags.value = await FlagService.getAll(serviceId);
             console.log("Flags loaded:", flags.value);
         } catch (e: any) {
             error.value = "Failed to load flags";

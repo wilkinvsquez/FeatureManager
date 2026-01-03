@@ -1,24 +1,15 @@
 <template>
-	<component
-		v-for="(node, index) in nodes"
-		:is="resolverService.getComponentType(node)"
-		v-bind="
-			resolverService.getComponentBindings(
-				node,
-				readOnly,
-				isCollapsed,
-				notification,
-				moduleContext,
-			)
-		"
-		:key="index">
-		<template v-if="resolverService.hasChildren(node)">
-			<JsonInterpreter
-				:nodes="resolverService.getChildren(node)"
-				:readOnly="readOnly"
-				:isCollapsed="isCollapsed"
-				:notification="notification"
-				:moduleContext="moduleContext" />
+	<component v-for="(node, index) in nodes" :is="resolver.getComponentType(node)" v-bind="resolver.getComponentBindings(
+		node,
+		readOnly,
+		isCollapsed,
+		notification,
+		moduleContext,
+	)
+		" :key="index">
+		<template v-if="resolver.hasChildren(node)">
+			<JsonInterpreter :nodes="resolver.getChildren(node)" :readOnly="readOnly" :isCollapsed="isCollapsed"
+				:notification="notification" :moduleContext="moduleContext" />
 		</template>
 	</component>
 </template>
@@ -26,6 +17,8 @@
 <script setup lang="ts">
 import { type PropType, ref, watch } from "vue";
 import resolverService from "../../services/interpreter/ResolverService";
+
+const resolver = resolverService;
 
 const props = defineProps({
 	nodes: {
